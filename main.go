@@ -1,10 +1,11 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "net"
-    "os"
+	"fmt"
+	"karim/http_server/server"
+	"log"
+	"net"
+	"os"
 )
 
 func main() {
@@ -33,20 +34,9 @@ func main() {
             log.Println("Error on accepting the connection:", err)
             break
         }
-
-        go handleConnection(conn)
+        go server.HandleConnection(conn)
     }
 }
 
-func handleConnection(conn net.Conn) {
-    log.Printf("Accepted connection from %s\n", conn.RemoteAddr().String())
-    defer conn.Close()
-    var message = "Hello there.."
-    n, _ := conn.Write([]byte(message))
 
-    if n > 0 && n != len(message){
-        log.Println("The message was sent partially")
-    } else if n == 0 {
-        log.Println("The message was not sent")
-    }
-}
+
