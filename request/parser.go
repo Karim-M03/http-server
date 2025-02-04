@@ -13,7 +13,7 @@ func DivideMessage(message []byte) (*types.Request, int, error) {
 	raws := strings.Split(strings.ReplaceAll(string(message), "\r", ""), "\n")
 
 	if len(raws) == 0 {
-		return nil, -1, errors.New("invalid request format")
+		return nil, -1, errors.New("Invalid request format")
 	}
 
 	var request types.Request
@@ -36,7 +36,7 @@ func DivideMessage(message []byte) (*types.Request, int, error) {
 		}
 		arr := strings.SplitN(raws[i], ":", 2)
 		if len(arr) != 2 {
-			return nil, -1, errors.New("invalid header format")
+			return nil, -1, errors.New("Invalid header format")
 		}
 		key := strings.TrimSpace(arr[0])
 		value := strings.TrimSpace(arr[1])
@@ -44,7 +44,7 @@ func DivideMessage(message []byte) (*types.Request, int, error) {
 		request.Headers[key] = value
 	}
 
-	// Join remaining lines as body
+	// join remaining lines as body
 	if i < len(raws) {
 		bodyStr := strings.Join(raws[i:], "\n")
 		if bodyStr != "" {
@@ -53,11 +53,11 @@ func DivideMessage(message []byte) (*types.Request, int, error) {
 		}
 	}
 
-	// Determine return code
+	// determine return code
 	if len(request.Headers) > 0 || string(request.Body.Data) != "" {
-		return &request, 1, nil // Start Line, Headers, and Body present
+		return &request, 1, nil // start Line, Headers, and Body present
 	}
-	return &request, 2, nil // Only Start Line present
+	return &request, 2, nil // only Start Line present
 }
 
 
@@ -65,7 +65,7 @@ func DivideMessage(message []byte) (*types.Request, int, error) {
 func StartLineValidation(startLineString string)(*types.StartLine, error){
 	startLineTokens := strings.Fields(strings.TrimSpace(startLineString))
 	if len(startLineTokens) != 3{
-		return nil, errors.New("invalid StartLine Format")
+		return nil, errors.New("Invalid StartLine Format")
 	}
 
 	methodString := startLineTokens[0]
@@ -73,13 +73,13 @@ func StartLineValidation(startLineString string)(*types.StartLine, error){
 	versionString := startLineTokens[2]
 
 	if !types.IsAllowedMethod(methodString){
-		return nil, errors.New("invalid Method")
+		return nil, errors.New("Invalid Method")
 	}
 
 	method := types.Method(methodString)
 
 	if versionString != "HTTP/1.1"{
-		return nil, errors.New("invalid Version. Version allowed HTTP/1.1")
+		return nil, errors.New("Invalid Version. Version allowed HTTP/1.1")
 	}
 
 	resource, err := types.CreateResource(resourceString)
