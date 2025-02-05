@@ -2,6 +2,7 @@
 
 ## Overview
 This is a simple **Student Management API** built from scratch using **Golang**. The API allows managing **students, classes, and exams**, enabling operations such as retrieving, adding, and updating data via HTTP methods.
+No frameworks will be used for implementing the http server
 
 ## Features
 - **Student Management**: Add, retrieve, and update student details and marks.
