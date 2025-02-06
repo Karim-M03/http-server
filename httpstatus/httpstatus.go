@@ -3,7 +3,6 @@ package httpstatus
 
 
 
-
 var StatusCodes = map[int]string{
 	// Informational responses (100–199)
 	100: "Continue",

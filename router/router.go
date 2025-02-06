@@ -2,11 +2,11 @@ package router
 
 import (
 	"errors"
-	"fmt"
 	"karim/http_server/client"
+	"karim/http_server/constants"
+	"karim/http_server/logger"
 	"karim/http_server/request"
 	"karim/http_server/response"
-	"log"
 	"net"
 	"sync"
 )
@@ -28,13 +28,14 @@ func NewRouter() *Router {
 }
 
 
-func (r *Router) RegisterEndpoint(endpoint string, handler func(*client.Client))(error){
-	r.Mutex.RLock()
-	defer r.Mutex.RUnlock()
-	if _, exist := r.Endpoints[endpoint]; exist{
+func (r *Router) RegisterEndpoint(endpoint string, handler func(*client.Client)) error {
+	r.Mutex.Lock()
+	defer r.Mutex.Unlock()
+	if _, exist := r.Endpoints[endpoint]; exist {
 		return errors.New("Endpoint already registered")
 	}
 	r.Endpoints[endpoint] = handler
+	logger.InfoLogger.Printf("Registered endpoint: %s", endpoint)
 	return nil
 }
 
@@ -42,10 +43,9 @@ func (r *Router) RegisterEndpoint(endpoint string, handler func(*client.Client))
 func (r *Router) HandleConnection(conn net.Conn) {
     defer conn.Close()
 	var clientObj client.Client
-	//log.Printf("Accepting client: %s", conn.LocalAddr().String())
 	clientObj.Connection = conn
 
-    buffer := make([]byte, 1024)
+    buffer := make([]byte, constants.BUFFER_SIZE)
 
     for {
         n, err := conn.Read(buffer)
@@ -57,7 +57,7 @@ func (r *Router) HandleConnection(conn net.Conn) {
         }
 
         if n > 0 {
-			log.Printf("Reading more than 0 bytes from the request")
+			logger.InfoLogger.Println("Reading more than 0 bytes from the request")
             data := buffer[:n]
 			request, code, err := request.DivideMessage(data)
 			if code == -1{
@@ -67,10 +67,9 @@ func (r *Router) HandleConnection(conn net.Conn) {
 				})
 				return
 			}
-			log.Printf("Reading Request \n%s", request.String())
+			logger.InfoLogger.Printf("Reading Request \n%s", request.String())
 
 			clientObj.Request = *request
-			fmt.Println(request.StartLine.String(false))
 			handler, exists := r.Endpoints[request.StartLine.String(false)]
 			if !exists{
 				

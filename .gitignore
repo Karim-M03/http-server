@@ -1,5 +1,5 @@
-server.log
 tmp/
 data/
 .env
 .air.toml
+./server.log*

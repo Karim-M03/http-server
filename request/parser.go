@@ -2,6 +2,7 @@ package request
 
 import (
 	"errors"
+	"karim/http_server/constants"
 	"karim/http_server/request/types"
 	"strings"
 )
@@ -78,7 +79,7 @@ func StartLineValidation(startLineString string)(*types.StartLine, error){
 
 	method := types.Method(methodString)
 
-	if versionString != "HTTP/1.1"{
+	if versionString != constants.PROTOCOL_VERSION{
 		return nil, errors.New("Invalid Version. Version allowed HTTP/1.1")
 	}
 

@@ -3,10 +3,11 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"karim/http_server/constants"
 	"karim/http_server/httpstatus"
+	"karim/http_server/logger"
 	"karim/http_server/request/types"
 	"karim/http_server/response"
-	"log"
 	"net"
 	"strconv"
 )
@@ -20,14 +21,14 @@ type Client struct {
 
 // SendResponse serializes the Response map and sends it to the client
 func (c *Client) SendResponse(r response.TmpResponse) error {
-	log.Printf("Sending the Response to %s", c.Connection.LocalAddr().String())
+	logger.InfoLogger.Printf("Sending the Response to %s", c.Connection.LocalAddr().String())
 
 	if c.Connection == nil {
 		return errors.New("no active connection")
 	}
 
 	c.Response.StartLine = response.StartLine{
-		Version:      "HTTP/1.1",
+		Version:      constants.PROTOCOL_VERSION,
 		StatusCode:   r.Status,
 		StatusMessage: httpstatus.StatusCodes[r.Status],
 	}
